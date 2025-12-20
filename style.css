@@ -1,0 +1,182 @@
+/* style.css */
+* { box-sizing: border-box; }
+
+:root{
+  --text: #000000;          /* main text = black */
+  --text-soft: #2b2b2b;     /* slightly softer black */
+  --muted: #333333;         /* subtitle/secondary */
+  --bg1: #ffe4ec;           /* baby pink gradient */
+  --bg2: #ffd1dc;
+
+  --card: #fff0f5;
+  --border: #f5b7c7;
+
+  --btn: #f4a7bb;
+  --btn-hover: #f090aa;
+
+  --link: #e75480;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  color: var(--text);
+}
+
+/* Force text color to be dark everywhere by default */
+body, .card, p, span, div, small, li, strong, em, b {
+  color: var(--text);
+}
+
+.container {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px; /* slightly wider looks nicer */
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.18);
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  color: var(--text);
+}
+
+p.sub {
+  margin: 0 0 18px;
+  color: var(--muted);      /* ✅ dark (not white) */
+  font-size: 14px;
+}
+
+/* Forms */
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--text);                 /* ✅ typed text black */
+  border: 1px solid var(--border);
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--btn-hover);
+  box-shadow: 0 0 0 4px rgba(240, 144, 170, 0.25);
+}
+
+/* Placeholder text */
+::placeholder {
+  color: #555555;
+  opacity: 1;
+}
+
+/* Buttons */
+button, .btn {
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--btn);
+  color: var(--text);        /* ✅ black text on pink */
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid var(--btn-hover);
+}
+
+button:hover, .btn:hover {
+  background: var(--btn-hover);
+}
+
+/* Messages */
+.msg {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.msg.error {
+  background: rgba(245, 101, 101, 0.15);
+  border: 1px solid rgba(245,101,101,0.35);
+}
+
+.msg.ok {
+  background: rgba(72, 187, 120, 0.15);
+  border: 1px solid rgba(72,187,120,0.35);
+}
+
+/* Links area */
+.link {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text);
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+a:hover { text-decoration: underline; }
+
+/* Dashboard menu */
+.menu {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+/* Profile grid */
+.profile-grid{
+  display:grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 14px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.row {
+  display:flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Make select match inputs */
+.select {
+  width:100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background:#fff;
+  color: var(--text);
+}
