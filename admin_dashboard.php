@@ -32,36 +32,36 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Admin Dashboard - TheatreFlix</title>
+  <link rel="stylesheet" href="style.css?v=999">
 </head>
-<body>
-  <div class="container">
-    <div class="card" style="max-width: 560px;">
-      <h1>Admin Dashboard</h1>
-      <p class="sub">Welcome, <?= h($name) ?> 👑</p>
 
-      <div class="profile-grid" style="grid-template-columns: 170px 1fr;">
-        <div><b>Admin ID:</b></div><div><?= $userId ?></div>
-        <div><b>Add Polls Permission:</b></div><div><?= h($addPollsStatus) ?></div>
-      </div>
+<body class="app-body">
+  <div class="app-page">
 
-      <div class="menu" style="margin-top: 16px;">
-        <!-- These are links to pages you will create next -->
-        <a class="btn" href="admin_polls.php">Manage Polls</a>
-        <a class="btn" href="admin_movies.php">Manage Movies</a>
-        <a class="btn" href="admin_shows.php">Manage Shows</a>
-        <a class="btn" href="admin_users.php">View Users</a>
-        <a class="btn" href="admin_movies.php">Manage Movies</a>
-<a class="btn" href="movie_catalogue.php">Movie Catalogue</a>
-
-      </div>
-
-      <div class="link" style="margin-top: 16px;">
-        <a href="dashboard.php">Go to Visitor Dashboard</a> |
+    <div class="app-topbar">
+      <div class="app-brand">THEATRE<span>FLIX</span> <span style="opacity:.75;font-weight:900;">Admin</span></div>
+      <div class="app-nav">
+        <span class="app-chip">Hi, <?= htmlspecialchars((string)$name) ?></span>
+        <a href="movie_catalogue.php">Catalogue</a>
+        <a href="dashboard.php">Visitor View</a>
         <a href="logout.php">Logout</a>
       </div>
     </div>
+
+    <div class="app-card">
+      <div class="app-title">Admin Dashboard</div>
+      <div class="app-sub">Manage movies, polls and users.</div>
+
+      <div class="app-grid">
+        <a class="btn" href="admin_movies.php">Manage Movies</a>
+        <a class="btn btn-ghost" href="admin_polls.php">Manage Polls</a>
+        <a class="btn btn-ghost" href="admin_users.php">View Users</a>
+      </div>
+    </div>
+
   </div>
 </body>
 </html>
+<?php
+// End of admin_dashboard.php

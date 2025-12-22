@@ -25,7 +25,7 @@ session_destroy();
   <main class="auth-layout auth-layout-single">
     <section class="auth-right">
       <div class="auth-card">
-        <h2 class="auth-card-title">You’re signed out ✅</h2>
+        <h2 class="auth-card-title">You’re signed out </h2>
         <p class="auth-card-sub">Redirecting to login…</p>
         <a class="auth-btn auth-btn-link" href="login.php">Go to Login</a>
       </div>

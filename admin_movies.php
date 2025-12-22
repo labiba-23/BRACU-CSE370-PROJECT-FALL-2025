@@ -180,3 +180,5 @@ $rows = $pdo->query("SELECT * FROM movie_catalogue ORDER BY released_year DESC")
 </div>
 </body>
 </html>
+<?php
+

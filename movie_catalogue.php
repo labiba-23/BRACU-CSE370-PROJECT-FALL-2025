@@ -2,52 +2,55 @@
 declare(strict_types=1);
 require_once __DIR__ . "/config.php";
 
-if (!isset($_SESSION["user_id"])) {
-  header("Location: login.php");
-  exit;
-}
-
-$userId = (int)$_SESSION["user_id"];
-
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8"); }
 
-// Ensure visitor exists
-$stmt = $pdo->prepare("SELECT ID FROM visitor WHERE ID = ? LIMIT 1");
-$stmt->execute([$userId]);
-if (!$stmt->fetch()) {
-  $pdo->prepare("INSERT INTO visitor (ID, Reward_points, Privacy) VALUES (?, 0, 0)")
-      ->execute([$userId]);
-}
-
-// Ensure subscription exists
-$stmt = $pdo->prepare("SELECT Wishlist FROM subscription WHERE Visitor_ID = ? LIMIT 1");
-$stmt->execute([$userId]);
-$sub = $stmt->fetch();
-
-if (!$sub) {
-  $sId = random_int(100000, 999999);
-  $pdo->prepare("INSERT INTO subscription (S_ID, Subtitles, Wishlist, Visitor_ID) VALUES (?, ?, ?, ?)")
-      ->execute([$sId, "", "", $userId]);
-  $wishlistStr = "";
-} else {
-  $wishlistStr = (string)($sub["Wishlist"] ?? "");
-}
+$guest = !isset($_SESSION["user_id"]);
+$userId = $guest ? null : (int)$_SESSION["user_id"];
+$name   = $guest ? "Guest" : (string)($_SESSION["user_name"] ?? "User");
+$name = $_SESSION["user_name"] ?? "User";
 
 $watchlist = [];
-if (trim($wishlistStr) !== "") {
-  $watchlist = array_values(array_filter(array_map("trim", explode(",", $wishlistStr))));
-}
-
-// Add to Up Next (wishlist)
 $msg = "";
-if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "add_up_next") {
-  $movie = trim((string)($_POST["movie"] ?? ""));
-  if ($movie !== "") {
-    if (!in_array($movie, $watchlist, true)) $watchlist[] = $movie;
-    $newWishlist = implode(", ", $watchlist);
-    $pdo->prepare("UPDATE subscription SET Wishlist = ? WHERE Visitor_ID = ?")
-        ->execute([$newWishlist, $userId]);
-    $msg = "✅ Added to your Up Next list!";
+
+/* Only do visitor/subscription/watchlist logic if user is logged in */
+if (!$guest && $userId !== null) {
+
+  // Ensure visitor exists
+  $stmt = $pdo->prepare("SELECT ID FROM visitor WHERE ID = ? LIMIT 1");
+  $stmt->execute([$userId]);
+  if (!$stmt->fetch()) {
+    $pdo->prepare("INSERT INTO visitor (ID, Reward_points, Privacy) VALUES (?, 0, 0)")
+        ->execute([$userId]);
+  }
+
+  // Ensure subscription exists
+  $stmt = $pdo->prepare("SELECT Wishlist FROM subscription WHERE Visitor_ID = ? LIMIT 1");
+  $stmt->execute([$userId]);
+  $sub = $stmt->fetch();
+
+  if (!$sub) {
+    $sId = random_int(100000, 999999);
+    $pdo->prepare("INSERT INTO subscription (S_ID, Subtitles, Wishlist, Visitor_ID) VALUES (?, ?, ?, ?)")
+        ->execute([$sId, "", "", $userId]);
+    $wishlistStr = "";
+  } else {
+    $wishlistStr = (string)($sub["Wishlist"] ?? "");
+  }
+
+  if (trim($wishlistStr) !== "") {
+    $watchlist = array_values(array_filter(array_map("trim", explode(",", $wishlistStr))));
+  }
+
+  // Add to Up Next (wishlist) - only when logged in
+  if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "add_up_next") {
+    $movie = trim((string)($_POST["movie"] ?? ""));
+    if ($movie !== "") {
+      if (!in_array($movie, $watchlist, true)) $watchlist[] = $movie;
+      $newWishlist = implode(", ", $watchlist);
+      $pdo->prepare("UPDATE subscription SET Wishlist = ? WHERE Visitor_ID = ?")
+          ->execute([$newWishlist, $userId]);
+      $msg = "✅ Added to your Up Next list!";
+    }
   }
 }
 
@@ -79,14 +82,14 @@ function posterUrl(?string $celeb_blog): ?string {
 }
 
 function yearText($released_year): string {
-  // your PK is date, so show year or date
   $s = (string)$released_year;
   if (strlen($s) >= 4) return substr($s, 0, 4);
   return $s;
 }
-
-$name = $_SESSION["user_name"] ?? "User";
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -314,14 +317,21 @@ $name = $_SESSION["user_name"] ?? "User";
 <body>
   <div class="topbar">
     <div class="brand">THEATRE<span>FLIX</span></div>
-    <div class="nav">
-      <span style="color:rgba(255,255,255,0.7); font-weight:700; font-size:13px;">
-        Hi, <?= h($name) ?>
-      </span>
-      <a href="dashboard.php">Dashboard</a>
-      <a href="watchlist.php">Watchlist</a>
-      <a href="logout.php">Logout</a>
-    </div>
+<div class="nav">
+  <span style="color:rgba(255,255,255,0.7); font-weight:700; font-size:13px;">
+    Hi, <?= h($name) ?>
+  </span>
+
+  <?php if ($guest): ?>
+    <a href="login.php">Sign in</a>
+    <a href="register.php">Create account</a>
+  <?php else: ?>
+    <a href="dashboard.php">Dashboard</a>
+    <a href="watchlist.php">Watchlist</a>
+    <a href="logout.php">Logout</a>
+  <?php endif; ?>
+</div>
+
   </div>
 
   <div class="wrap">

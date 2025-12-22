@@ -47,7 +47,8 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - TheatreFlix</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css?v=4"/>
+
 </head>
 
 <body class="auth-body">
@@ -55,7 +56,7 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
     <header class="auth-topbar">
       <div class="auth-brand">THEATRE<span>FLIX</span></div>
       <nav class="auth-nav">
-        <a href="movie_catalogue.php">Catalogue</a>
+        <a  href="movie_catalogue.php">Catalogue</a>
         <a class="auth-cta" href="register.php">Create account</a>
       </nav>
     </header>
@@ -63,11 +64,13 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
     <main class="auth-layout">
       <section class="auth-left">
         <div class="auth-left-inner">
-          <div class="auth-pill">NOW SHOWING</div>
+          <div class="auth-pill">WELCOME TO CINEHAUL!</div>
           <h1 class="auth-title">Pick what to watch next.</h1>
           <p class="auth-desc">
-            Save movies & series to your watchlist, explore what’s playing, and build your “Up Next” list in seconds.
+            Save movies & series to your watchlist, explore what’s playing, and build your UPNEXT list in seconds.
           </p>
+        </div>
+
 
     
         <div class="auth-glow"></div>
