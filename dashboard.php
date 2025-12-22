@@ -28,6 +28,11 @@ $name = $_SESSION["user_name"] ?? "User";
   <a class="btn" href="profile.php">Profile</a>
   <a class="btn" href="friends.php">Friends</a>
   <a class="btn" href="watchlist.php">Watchlist</a>
+  <a class="btn" href="movie_catalogue.php">Movie Catalogue</a>
+<a class="btn" href="up_next.php">Choose Up Next</a>
+<a class="btn" href="polls.php">Polls</a>
+
+
 </div>
 
 <div class="link">
