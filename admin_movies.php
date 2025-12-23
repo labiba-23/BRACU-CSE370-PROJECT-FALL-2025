@@ -1,4 +1,4 @@
-<?php
+<?php  //I am adding movie management features
 declare(strict_types=1);
 require_once __DIR__ . "/config.php";
 
@@ -49,7 +49,7 @@ if (isset($_GET["delete"])) {
   }
 }
 
-// ADD movie
+// ADD movie 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $released_year = trim($_POST["released_year"] ?? ""); // date
   $on_movie      = trim($_POST["on_movie"] ?? "");
