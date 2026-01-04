@@ -46,6 +46,8 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
         <a href="movie_catalogue.php">Catalogue</a>
         <a href="dashboard.php">Visitor View</a>
         <a href="logout.php">Logout</a>
+       
+
       </div>
     </div>
 
@@ -57,6 +59,8 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
         <a class="btn" href="admin_movies.php">Manage Movies</a>
         <a class="btn btn-ghost" href="admin_polls.php">Manage Polls</a>
         <a class="btn btn-ghost" href="admin_users.php">View Users</a>
+        
+
       </div>
     </div>
 
