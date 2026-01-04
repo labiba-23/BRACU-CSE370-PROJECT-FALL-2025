@@ -7,15 +7,12 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
 $guest = !isset($_SESSION["user_id"]);
 $userId = $guest ? null : (int)$_SESSION["user_id"];
 $name   = $guest ? "Guest" : (string)($_SESSION["user_name"] ?? "User");
-$name = $_SESSION["user_name"] ?? "User";
 
 $watchlist = [];
 $msg = "";
 
 
 if (!$guest && $userId !== null) {
-
-  
   $stmt = $pdo->prepare("SELECT ID FROM visitor WHERE ID = ? LIMIT 1");
   $stmt->execute([$userId]);
   if (!$stmt->fetch()) {
@@ -40,7 +37,6 @@ if (!$guest && $userId !== null) {
     $watchlist = array_values(array_filter(array_map("trim", explode(",", $wishlistStr))));
   }
 
-  
   if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "add_up_next") {
     $movie = trim((string)($_POST["movie"] ?? ""));
     if ($movie !== "") {
@@ -48,47 +44,47 @@ if (!$guest && $userId !== null) {
       $newWishlist = implode(", ", $watchlist);
       $pdo->prepare("UPDATE subscription SET Wishlist = ? WHERE Visitor_ID = ?")
           ->execute([$newWishlist, $userId]);
-      $msg = "Added to your Up Next list!";
+      $msg = "Added to your watchlist!";
     }
   }
 }
 
 
 $stmt = $pdo->query("
-  SELECT released_year, on_movie, up_movie, duration, reviews, celeb_blog
+  SELECT released_year, on_movie, up_movie, duration, reviews, celeb_blog, poster, trailer_url
   FROM movie_catalogue
   WHERE on_movie IS NOT NULL AND TRIM(on_movie) <> ''
   ORDER BY released_year DESC
 ");
 $ongoing = $stmt->fetchAll();
 
-
 $stmt = $pdo->query("
-  SELECT released_year, on_movie, up_movie, duration, reviews, celeb_blog
+  SELECT released_year, on_movie, up_movie, duration, reviews, celeb_blog, poster, trailer_url
   FROM movie_catalogue
   WHERE up_movie IS NOT NULL AND TRIM(up_movie) <> ''
   ORDER BY released_year ASC
 ");
 $upcoming = $stmt->fetchAll();
 
-
-function posterUrl(?string $celeb_blog): ?string {
-  if (!$celeb_blog) return null;
-  $s = trim($celeb_blog);
-  $lower = strtolower($s);
-  if (preg_match('/\.(jpg|jpeg|png|webp)$/', $lower)) return $s;
-  return null;
-}
-
 function yearText($released_year): string {
   $s = (string)$released_year;
-  if (strlen($s) >= 4) return substr($s, 0, 4);
-  return $s;
+  return (strlen($s) >= 4) ? substr($s, 0, 4) : $s;
+}
+
+
+function posterPath(array $m): string {
+  $p = trim((string)($m["poster"] ?? ""));
+  return $p !== "" ? $p : "assets/placeholder.jpg";
+}
+
+
+function trailerLink(array $m): string {
+  $url = trim((string)($m["trailer_url"] ?? ""));
+  if ($url === "") return "";
+  if (!preg_match('#^https?://#i', $url)) return "";
+  return $url;
 }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,7 +92,6 @@ function yearText($released_year): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Movie Catalogue</title>
 
-  
   <style>
     *{ box-sizing:border-box; }
     body{
@@ -223,6 +218,18 @@ function yearText($released_year): string {
       position:absolute;
       inset:0;
     }
+
+   
+    .poster a{
+      position:absolute;
+      inset:0;
+      display:block;
+      z-index:1;
+    }
+    .poster a:hover img{
+      filter: brightness(0.9);
+    }
+
     .badge{
       position:absolute;
       top:10px;
@@ -234,10 +241,11 @@ function yearText($released_year): string {
       font-size:12px;
       font-weight:800;
       letter-spacing:0.2px;
+      z-index:3;
     }
     .title-shadow{
       position:relative;
-      z-index:2;
+      z-index:3;
       font-weight:800;
       font-size:15px;
       line-height:1.15;
@@ -264,7 +272,7 @@ function yearText($released_year): string {
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:6px;
+      gap:8px;
       border:0;
       cursor:pointer;
       border-radius:12px;
@@ -273,18 +281,13 @@ function yearText($released_year): string {
       font-size:13px;
       text-decoration:none;
       width:100%;
+      white-space:nowrap;
     }
     .btn-pink{
       background:#ff4fa3;
       color:#120612;
     }
     .btn-pink:hover{ filter: brightness(0.95); }
-    .btn-ghost{
-      background:rgba(255,255,255,0.08);
-      color:#fff;
-      border:1px solid rgba(255,255,255,0.12);
-    }
-    .btn-ghost:hover{ border-color: rgba(255,79,163,0.55); }
 
     .pill{
       display:inline-block;
@@ -316,21 +319,20 @@ function yearText($released_year): string {
 <body>
   <div class="topbar">
     <div class="brand">THEATRE<span>FLIX</span></div>
-<div class="nav">
-  <span style="color:rgba(255,255,255,0.7); font-weight:700; font-size:13px;">
-    Hi, <?= h($name) ?>
-  </span>
+    <div class="nav">
+      <span style="color:rgba(255,255,255,0.7); font-weight:700; font-size:13px;">
+        Hi, <?= h($name) ?>
+      </span>
 
-  <?php if ($guest): ?>
-    <a href="login.php">Sign in</a>
-    <a href="register.php">Create account</a>
-  <?php else: ?>
-    <a href="dashboard.php">Dashboard</a>
-    <a href="watchlist.php">Watchlist</a>
-    <a href="logout.php">Logout</a>
-  <?php endif; ?>
-</div>
-
+      <?php if ($guest): ?>
+        <a href="login.php">Sign in</a>
+        <a href="register.php">Create account</a>
+      <?php else: ?>
+        <a href="dashboard.php">Dashboard</a>
+        <a href="watchlist.php">Watchlist</a>
+        <a href="logout.php">Logout</a>
+      <?php endif; ?>
+    </div>
   </div>
 
   <div class="wrap">
@@ -352,17 +354,25 @@ function yearText($released_year): string {
       <?php else: ?>
         <?php foreach ($ongoing as $m): ?>
           <?php
-            $title = (string)$m["on_movie"];
-            $poster = posterUrl($m["celeb_blog"] ?? null);
+            $title  = (string)$m["on_movie"];
+            $poster = posterPath($m);
+            $ytLink = trailerLink($m);
           ?>
           <div class="card">
             <div class="poster">
-              <?php if ($poster): ?>
-                <img src="<?= h($poster) ?>" alt="<?= h($title) ?>">
+              <?php if ($ytLink !== ""): ?>
+                <a href="<?= h($ytLink) ?>" target="_blank" rel="noopener" aria-label="Watch trailer for <?= h($title) ?>"></a>
               <?php endif; ?>
+
+              <img
+                src="<?= h($poster) ?>"
+                alt="<?= h($title) ?>"
+                onerror="this.onerror=null;this.src='assets/placeholder.jpg';"
+              >
               <div class="badge">NOW</div>
               <div class="title-shadow"><?= h($title) ?></div>
             </div>
+
             <div class="meta">
               <small>Year: <?= h(yearText($m["released_year"])) ?> • Duration: <?= h((string)$m["duration"]) ?> min</small>
               <small>Reviews: <?= h((string)$m["reviews"]) ?></small>
@@ -371,9 +381,7 @@ function yearText($released_year): string {
                 <form method="POST" style="width:100%;">
                   <input type="hidden" name="action" value="add_up_next">
                   <input type="hidden" name="movie" value="<?= h($title) ?>">
-                  <button class="btn btn-pink" type="submit">
-  ➕ Add to Watchlist
-</button>
+                  <button class="btn btn-pink" type="submit">➕ Add to Watchlist</button>
                 </form>
               </div>
             </div>
@@ -393,17 +401,25 @@ function yearText($released_year): string {
       <?php else: ?>
         <?php foreach ($upcoming as $m): ?>
           <?php
-            $title = (string)$m["up_movie"];
-            $poster = posterUrl($m["celeb_blog"] ?? null);
+            $title  = (string)$m["up_movie"];
+            $poster = posterPath($m);
+            $ytLink = trailerLink($m);
           ?>
           <div class="card">
             <div class="poster">
-              <?php if ($poster): ?>
-                <img src="<?= h($poster) ?>" alt="<?= h($title) ?>">
+              <?php if ($ytLink !== ""): ?>
+                <a href="<?= h($ytLink) ?>" target="_blank" rel="noopener" aria-label="Watch trailer for <?= h($title) ?>"></a>
               <?php endif; ?>
+
+              <img
+                src="<?= h($poster) ?>"
+                alt="<?= h($title) ?>"
+                onerror="this.onerror=null;this.src='assets/placeholder.jpg';"
+              >
               <div class="badge">SOON</div>
               <div class="title-shadow"><?= h($title) ?></div>
             </div>
+
             <div class="meta">
               <small>Release: <?= h((string)$m["released_year"]) ?> • Duration: <?= h((string)$m["duration"]) ?> min</small>
               <small>Reviews: <?= h((string)$m["reviews"]) ?></small>
@@ -422,7 +438,7 @@ function yearText($released_year): string {
     </div>
 
     <div class="listbox">
-      <h3>Your Up Next / Watchlist</h3>
+      <h3>Browse your Watchlist</h3>
       <?php if (!$watchlist): ?>
         <div class="pill">No selections yet. Click “Add to Up Next” on a movie.</div>
       <?php else: ?>
@@ -436,4 +452,6 @@ function yearText($released_year): string {
   </div>
 </body>
 </html>
+
+
 

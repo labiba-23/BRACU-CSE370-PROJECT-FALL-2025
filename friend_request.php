@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   ");
   $stmt->execute([$requestId, $userId]);
   $req = $stmt->fetch();
+  
 
   if (!$req) {
     $msg = "Request not found.";

@@ -15,26 +15,23 @@ function h(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
 }
 
+// Ensure visitor row exists
 $stmt = $pdo->prepare("SELECT ID FROM visitor WHERE ID = ? LIMIT 1");
 $stmt->execute([$userId]);
 if (!$stmt->fetch()) {
-    $pdo->prepare(
-        "INSERT INTO visitor (ID, Reward_points, Privacy) VALUES (?, 0, 0)"
-    )->execute([$userId]);
+    $pdo->prepare("INSERT INTO visitor (ID, Reward_points, Privacy) VALUES (?, 0, 0)")
+        ->execute([$userId]);
 }
 
-$stmt = $pdo->prepare(
-    "SELECT Wishlist FROM subscription WHERE Visitor_ID = ? LIMIT 1"
-);
+
+$stmt = $pdo->prepare("SELECT Wishlist FROM subscription WHERE Visitor_ID = ? LIMIT 1");
 $stmt->execute([$userId]);
 $row = $stmt->fetch();
 
 if (!$row) {
     $sId = random_int(100000, 999999);
-    $pdo->prepare(
-        "INSERT INTO subscription (S_ID, Subtitles, Wishlist, Visitor_ID)
-         VALUES (?, '', '', ?)"
-    )->execute([$sId, $userId]);
+    $pdo->prepare("INSERT INTO subscription (S_ID, Subtitles, Wishlist, Visitor_ID) VALUES (?, '', '', ?)")
+        ->execute([$sId, $userId]);
     $wishlistStr = "";
 } else {
     $wishlistStr = (string)($row["Wishlist"] ?? "");
@@ -42,25 +39,58 @@ if (!$row) {
 
 $watchlist = [];
 if (trim($wishlistStr) !== "") {
-    $watchlist = array_values(
-        array_filter(array_map("trim", explode(",", $wishlistStr)))
-    );
+    $watchlist = array_values(array_filter(array_map("trim", explode(",", $wishlistStr))));
 }
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove"])) {
     $remove = trim((string)$_POST["remove"]);
 
-    $watchlist = array_values(
-        array_filter($watchlist, fn($m) => $m !== $remove)
-    );
+    $watchlist = array_values(array_filter($watchlist, fn($m) => $m !== $remove));
 
     $newWishlist = implode(", ", $watchlist);
-    $stmt = $pdo->prepare(
-        "UPDATE subscription SET Wishlist = ? WHERE Visitor_ID = ?"
-    );
+    $stmt = $pdo->prepare("UPDATE subscription SET Wishlist = ? WHERE Visitor_ID = ?");
     $stmt->execute([$newWishlist, $userId]);
 
     $message = "Removed from watchlist.";
     $isOk = true;
+}
+
+
+$postersByTitle = [];
+$trailersByTitle = [];
+
+if ($watchlist) {
+    $placeholders = implode(",", array_fill(0, count($watchlist), "?"));
+
+    $sql = "
+      SELECT
+        COALESCE(NULLIF(TRIM(on_movie),''), NULLIF(TRIM(up_movie),'')) AS title,
+        poster,
+        trailer_url
+      FROM movie_catalogue
+      WHERE COALESCE(NULLIF(TRIM(on_movie),''), NULLIF(TRIM(up_movie),'')) IN ($placeholders)
+    ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($watchlist);
+
+    foreach ($stmt->fetchAll() as $r) {
+        $t = (string)$r["title"];
+        $postersByTitle[$t] = trim((string)($r["poster"] ?? ""));
+        $trailersByTitle[$t] = trim((string)($r["trailer_url"] ?? ""));
+    }
+}
+
+function safePoster(string $poster): string {
+    $poster = trim($poster);
+    return $poster !== "" ? $poster : "assets/placeholder.jpg";
+}
+
+function safeTrailer(string $url): string {
+    $url = trim($url);
+    if ($url === "") return "";
+    if (!preg_match('#^https?://#i', $url)) return "";
+    return $url;
 }
 ?>
 <!DOCTYPE html>
@@ -92,9 +122,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove"])) {
     <?php else: ?>
       <div class="watchlist-grid">
         <?php foreach ($watchlist as $title): ?>
+          <?php
+            $poster = safePoster($postersByTitle[$title] ?? "");
+            $ytLink = safeTrailer($trailersByTitle[$title] ?? "");
+          ?>
           <div class="watch-card">
-            <div class="watch-poster">
-              <?= h(mb_strtoupper(mb_substr($title, 0, 1))) ?>
+            <div class="watch-poster" style="padding:0; overflow:hidden;">
+              <?php if ($ytLink !== ""): ?>
+                <a href="<?= h($ytLink) ?>" target="_blank" rel="noopener" style="display:block; width:100%; height:100%;">
+              <?php endif; ?>
+
+              <img
+                src="<?= h($poster) ?>"
+                alt="<?= h($title) ?>"
+                style="width:100%; height:100%; object-fit:cover; display:block;"
+                onerror="this.onerror=null;this.src='assets/placeholder.jpg';"
+              >
+
+              <?php if ($ytLink !== ""): ?>
+                </a>
+              <?php endif; ?>
             </div>
 
             <div class="watch-info">
@@ -122,3 +169,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove"])) {
 
 </body>
 </html>
+

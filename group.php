@@ -15,7 +15,7 @@ function h(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
 }
 
-/* SEND FRIEND REQUEST / ADD FRIEND */
+
 if ($_SERVER["RE=QUEST_METHOD"] === "POST" && isset($_POST["send_request"])) {
     $email = trim($_POST["email"] ?? "");
 
@@ -80,7 +80,6 @@ if ($_SERVER["RE=QUEST_METHOD"] === "POST" && isset($_POST["send_request"])) {
     }
 }
 
-/* CREATE GROUP */
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["create_group"])) {
     $group_name = trim($_POST["group_name"] ?? "");
     $members = $_POST["friends"] ?? [];
@@ -113,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["create_group"])) {
     }
 }
 
-/* LOAD FRIENDS */
+
 $stmt = $pdo->prepare("
     SELECT u.ID, u.Name, u.Email
     FROM can_add c

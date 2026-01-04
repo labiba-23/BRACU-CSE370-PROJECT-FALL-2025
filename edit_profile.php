@@ -1,4 +1,4 @@
-<?php  //this is my editing profile page
+<?php  
 declare(strict_types=1);
 require_once __DIR__ . "/config.php";
 
