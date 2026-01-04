@@ -1,4 +1,5 @@
-/* ===== RESET ===== */
+
+
 * {
   margin: 0;
   padding: 0;
@@ -6,20 +7,20 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ===== AUTH PAGE BACKGROUND (use class, not body flex-centering) ===== */
+
 .auth-body {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f0f14, #1b1c23);
   color: #ffffff;
 }
 
-/* Page wrapper */
+
 .auth-page {
   min-height: 100vh;
   padding: 28px 40px;
 }
 
-/* ===== TOP BAR ===== */
+
 .auth-topbar {
   display: flex;
   align-items: center;
@@ -62,7 +63,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* ===== MAIN LAYOUT (left hero + right card) ===== */
+
 .auth-layout {
   margin-top: 40px;
   display: grid;
@@ -71,7 +72,7 @@
   align-items: start;
 }
 
-/* Left hero */
+
 .auth-left {
   position: relative;
   padding: 28px 10px;
@@ -105,25 +106,25 @@
   max-width: 720px;
 }
 
-/* Optional glow (behind hero, not on top of text) */
+
 .auth-glow {
   position: absolute;
   inset: auto auto -120px -120px;
   width: 420px;
   height: 420px;
-  background: radial-gradient(circle, rgba(230, 90, 163, 0.35), rgba(230, 90, 163, 0) 70%);
+  background: radial-gradient(circle, rgba(209, 179, 195, 0.35), rgba(230, 90, 163, 0) 70%);
   filter: blur(10px);
   pointer-events: none;
   z-index: -1;
 }
 
-/* Right side alignment */
+
 .auth-right {
   display: flex;
   justify-content: flex-end;
 }
 
-/* ===== CARD ===== */
+
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -146,7 +147,7 @@
   margin-bottom: 18px;
 }
 
-/* Alerts */
+
 .auth-alert {
   background: rgba(255, 90, 90, 0.14);
   border: 1px solid rgba(255, 90, 90, 0.3);
@@ -159,7 +160,6 @@
   margin-left: 18px;
 }
 
-/* Labels */
 .auth-label {
   display: block;
   margin: 10px 0 8px;
@@ -167,7 +167,7 @@
   color: #ffffff;
 }
 
-/* Inputs */
+
 .auth-input {
   width: 100%;
   padding: 14px 16px;
@@ -184,7 +184,7 @@
   color: #777777;
 }
 
-/* Button */
+
 .auth-btn {
   width: 100%;
   margin-top: 10px;
@@ -204,7 +204,7 @@
   box-shadow: 0 8px 25px rgba(230, 90, 163, 0.4);
 }
 
-/* Divider */
+
 .auth-divider {
   display: flex;
   align-items: center;
@@ -225,7 +225,7 @@
   font-size: 14px;
 }
 
-/* Footer */
+
 .auth-footer {
   margin-top: 6px;
   text-align: center;
@@ -243,7 +243,7 @@
   text-decoration: underline;
 }
 
-/* ===== RESPONSIVE ===== */
+
 @media (max-width: 980px) {
   .auth-layout {
     grid-template-columns: 1fr;
@@ -271,9 +271,7 @@
 .auth-glow {
   pointer-events: none;
 }
-/* =========================================================
-   APP PAGES (dashboard, register, admin pages, etc.)
-   ========================================================= */
+
 
 .app-body{
   min-height: 100vh;
@@ -355,7 +353,7 @@
   margin-top: 12px;
 }
 
-/* Buttons */
+
 .btn, .app-btn{
   display:inline-flex;
   align-items:center;
@@ -442,30 +440,30 @@ th{
   background: rgba(255,90,90,0.14);
   color: #ffe2e2;
 }
-/* =========================================================
 
-body:not(.auth-body) {
+
+body:not(.auth-body):not(.app-body) {
   background: linear-gradient(135deg, #0f0f14, #1b1c23);
   color: #ffffff;
 }
 
-/* Center + spacing */
+
 .container{
   max-width: 1100px;
   margin: 0 auto;
   padding: 28px 24px;
 }
 
-/* Card look */
+
 .card{
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 18px;
   padding: 18px;
   box-shadow: 0 18px 50px rgba(0,0,0,0.55);
 }
 
-/* Titles + subtitle */
+
 .card h1{
   font-size: 34px;
   font-weight: 900;
@@ -477,7 +475,7 @@ body:not(.auth-body) {
   line-height: 1.6;
 }
 
-/* Messages (success/error) */
+
 .msg{
   padding: 12px 14px;
   border-radius: 14px;
@@ -497,7 +495,7 @@ body:not(.auth-body) {
   color: #ffe2e2;
 }
 
-/* Forms */
+
 .card label{
   display:block;
   font-weight: 800;
@@ -516,7 +514,7 @@ body:not(.auth-body) {
   margin-bottom: 14px;
 }
 
-/* Buttons (style <button> + links with .btn) */
+
 .card button,
 .btn{
   display:inline-flex;
@@ -539,7 +537,7 @@ body:not(.auth-body) {
   box-shadow: 0 10px 25px rgba(230,90,163,0.35);
 }
 
-/* Small + danger buttons used in watchlist/admin */
+
 .btn.small{
   padding: 8px 10px;
   border-radius: 12px;
@@ -554,7 +552,7 @@ body:not(.auth-body) {
   border-color: rgba(255,90,90,0.6);
 }
 
-/* Links section */
+
 .link a{
   color:#fff;
   font-weight:800;
@@ -566,7 +564,7 @@ body:not(.auth-body) {
   text-decoration: underline;
 }
 
-/* Profile grid */
+
 .profile-grid{
   display:grid;
   grid-template-columns: 180px 1fr;
@@ -575,7 +573,7 @@ body:not(.auth-body) {
 }
 .profile-grid b{ color:#fff; }
 
-/* Row buttons spacing */
+
 .row{
   display:flex;
   gap: 12px;
@@ -583,12 +581,12 @@ body:not(.auth-body) {
   margin-top: 16px;
 }
 
-/* Tables (admin_movies) */
+
 table{
   width:100%;
   border-collapse: collapse;
   margin-top: 10px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.25);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 14px;
   overflow:hidden;
@@ -605,33 +603,54 @@ th{
   color: #fff;
 }
 
-/* Watchlist grid/cards */
+
 .watchlist-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 14px;
+  gap: 16px;
   margin-top: 14px;
 }
+
 .watch-card{
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
-  overflow:hidden;
+  overflow: hidden;
 }
+
 .watch-poster{
-  height: 180px;
-  background: linear-gradient(135deg, rgba(255,111,183,0.22), rgba(122,167,255,0.18));
+  width: 100%;
+  aspect-ratio: 2 / 3;   
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,111,183,0.22),
+    rgba(122,167,255,0.18)
+  );
 }
+
 .watch-poster img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    
+  display: block;
 }
+
+
+.watch-poster a{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+
 .watch-info{
-  padding: 12px 12px 14px;
+  padding: 14px 14px 16px;
 }
-/* Friend request buttons */
+
+
 .friend-actions{
   display:flex;
   gap:8px;
@@ -659,7 +678,7 @@ th{
   border: 1px solid rgba(255,165,0,0.35);
   color: #ffd9a3;
 }
-/* Notification bell + badge */
+
 .notif-btn{
   position: relative;
   display: inline-flex;
@@ -702,3 +721,170 @@ th { color:rgba(255,255,255,0.75); font-weight:700; font-size:13px; }
   color:#fff;
 }
 
+
+.card h1,
+.card h2,
+.card h3 {
+  color: #ff6fb7;  
+}
+table a {
+  color: #ff6fb7;       
+  font-weight: 700;
+  text-decoration: none;
+}
+
+table a:hover {
+  color: #ff4d4d;       
+  text-decoration: underline;
+}
+.admin-page {
+    padding: 40px;
+    color: #fff;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+}
+
+.admin-table th {
+    background: #222;
+}
+
+.admin-table tr:hover {
+    background: #2a2a2a;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    color: #ff69b4;
+    text-decoration: none;
+}
+.admin-page h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card h1 {
+  color: #ff6fb7;
+}
+
+.card h2,
+.card h3 {
+  color: #ff6fb7;
+}
+
+
+.card label {
+  color: #ff6fb7;
+}
+
+
+.card button {
+  background: linear-gradient(135deg, #e65aa3, #ff6fb7);
+  color: #120612;
+}
+
+.card button:hover {
+  box-shadow: 0 10px 25px rgba(255, 111, 183, 0.45);
+}
+
+
+.btn {
+  background: linear-gradient(135deg, #e65aa3, #ff6fb7);
+  color: #120612;
+}
+
+.btn:hover {
+  box-shadow: 0 10px 25px rgba(255, 111, 183, 0.45);
+}
+
+
+table th {
+  color: #ff6fb7;
+}
+
+
+td {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+
+.btn.small {
+  background: rgba(255, 111, 183, 0.18);
+  border: 1px solid rgba(255, 111, 183, 0.45);
+  color: #fff;
+}
+
+.btn.small:hover {
+  background: rgba(255, 111, 183, 0.3);
+}
+
+.group-link {
+  color: #ff6fb7;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.group-link:hover {
+  text-decoration: underline;
+}
+.app-card ul li {
+  color: #fff;
+}
+.app-title.pink {
+  color: #ff6fb7;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.action-card {
+  background: linear-gradient(145deg, #ff7ebc, #ff5fa9);
+  border-radius: 18px;
+  padding: 22px 18px;
+  text-decoration: none;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 25px rgba(255, 95, 169, 0.25);
+}
+
+.action-card .icon {
+  font-size: 30px;
+}
+
+.action-card .label {
+  font-size: 15px;
+  text-align: center;
+}
+
+
+.action-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 18px 40px rgba(255, 95, 169, 0.45);
+}
+
+
+.action-card.primary {
+  background: linear-gradient(145deg, #ff9ad5, #ff5fa9);
+  box-shadow: 0 18px 45px rgba(255, 95, 169, 0.6);
+}

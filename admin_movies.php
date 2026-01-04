@@ -1,4 +1,4 @@
-<?php  //I am adding movie management features
+<?php  
 declare(strict_types=1);
 require_once __DIR__ . "/config.php";
 
@@ -22,9 +22,9 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
 $msg = "";
 $isOk = true;
 
-// DELETE movie 
+
 if (isset($_GET["delete"])) {
-  $releasedYear = $_GET["delete"]; // yyyy-mm-dd
+  $releasedYear = $_GET["delete"];
 
   $pdo->beginTransaction();
   try {
@@ -49,9 +49,9 @@ if (isset($_GET["delete"])) {
   }
 }
 
-// ADD movie 
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-  $released_year = trim($_POST["released_year"] ?? ""); // date
+  $released_year = trim($_POST["released_year"] ?? ""); 
   $on_movie      = trim($_POST["on_movie"] ?? "");
   $up_movie      = trim($_POST["up_movie"] ?? "");
   $duration      = (int)($_POST["duration"] ?? 0);
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   }
 }
 
-// latest movies
+
 $rows = $pdo->query("SELECT * FROM movie_catalogue ORDER BY released_year DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -96,8 +96,8 @@ $rows = $pdo->query("SELECT * FROM movie_catalogue ORDER BY released_year DESC")
   <title>Manage Movies</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
-<div class="container">
+<body class="admin_movies">
+<div class="container admin_movies">
   <div class="card" style="max-width: 980px;">
     <h1>Manage Movies</h1>
     <p class="sub">Add / Remove movies using your movie_catalogue table</p>
@@ -130,8 +130,8 @@ $rows = $pdo->query("SELECT * FROM movie_catalogue ORDER BY released_year DESC")
     </form>
 
     <h3 style="margin-top:18px;">Current Movies in Table</h3>
-    <div style="overflow:auto; border:1px solid #f5b7c7; border-radius:12px; background: rgba(255,255,255,0.6); padding:10px;">
-      <table style="width:100%; border-collapse:collapse;">
+    <div style="overflow:auto; border:1px solid #f5b7c7; border-radius:12px; background: rgba(0, 0, 0, 1); padding:10px;">
+      <table id="admin-movies-table">
         <thead>
           <tr>
             <th style="text-align:left; padding:8px; border-bottom:1px solid #f5b7c7;">released_year</th>
@@ -154,6 +154,8 @@ $rows = $pdo->query("SELECT * FROM movie_catalogue ORDER BY released_year DESC")
                 <td style="padding:8px; border-bottom:1px solid #f5b7c7;"><?= h((string)$r["duration"]) ?></td>
                 <td style="padding:8px; border-bottom:1px solid #f5b7c7;"><?= h((string)$r["reviews"]) ?></td>
                 <td style="padding:8px; border-bottom:1px solid #f5b7c7;">
+                  
+
                   <a href="admin_movies.php?delete=<?= urlencode((string)$r["released_year"]) ?>"
                      onclick="return confirm('Remove this movie entry?');">Remove</a>
                 </td>

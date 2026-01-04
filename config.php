@@ -1,6 +1,6 @@
 <?php
 // config.php
-///this is my configuration
+
 declare(strict_types=1);
 
 

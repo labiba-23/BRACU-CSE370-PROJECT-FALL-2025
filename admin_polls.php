@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "creat
       foreach ($opts as $o) $ins->execute([$pollId, $o]);
 
       $pdo->commit();
-      $msg = "✅ Poll created (not active yet).";
+      $msg = " Poll created (not active yet).";
       $isOk = true;
     } catch (Exception $e) {
       $pdo->rollBack();
@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "activ
       $stmt = $pdo->prepare("UPDATE polls SET is_active = 1 WHERE poll_id = ?");
       $stmt->execute([$pollId]);
       $pdo->commit();
-      $msg = "✅ Poll activated!";
+      $msg = " Poll activated!";
       $isOk = true;
     } catch (Exception $e) {
       $pdo->rollBack();
@@ -64,6 +64,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "activ
   }
 }
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "delete") {
+  $pollId = (int)($_POST["poll_id"] ?? 0);
+
+  if ($pollId > 0) {
+    $pdo->beginTransaction();
+    try {  
+      $stmt = $pdo->prepare("
+        DELETE FROM poll_votes
+        WHERE option_id IN (SELECT option_id FROM poll_options WHERE poll_id = ?)
+      ");
+      $stmt->execute([$pollId]);
+
+   
+      $stmt = $pdo->prepare("DELETE FROM poll_options WHERE poll_id = ?");
+      $stmt->execute([$pollId]);
+
+
+      $stmt = $pdo->prepare("DELETE FROM polls WHERE poll_id = ?");
+      $stmt->execute([$pollId]);
+
+      $pdo->commit();
+      $msg = "🗑️ Poll deleted.";
+      $isOk = true;
+    } catch (Exception $e) {
+      $pdo->rollBack();
+      $msg = "Failed to delete poll.";
+      $isOk = false;
+    }
+  }
+}
 
 $polls = $pdo->query("SELECT poll_id, question, is_active, created_at FROM polls ORDER BY created_at DESC")->fetchAll();
 
@@ -156,16 +186,35 @@ if ($active) {
                 <td><?= h((string)$p["question"]) ?></td>
                 <td><?= ((int)$p["is_active"] === 1) ? "ACTIVE" : "inactive" ?></td>
                 <td>
-                  <?php if ((int)$p["is_active"] !== 1): ?>
-                    <form method="POST" style="margin:0;">
-                      <input type="hidden" name="action" value="activate">
-                      <input type="hidden" name="poll_id" value="<?= (int)$p["poll_id"] ?>">
-                      <button class="btn btn-ghost" type="submit">Activate</button>
-                    </form>
-                  <?php else: ?>
-                    <span class="app-chip">Active</span>
-                  <?php endif; ?>
-                </td>
+  <?php if ((int)$p["is_active"] !== 1): ?>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <form method="POST" style="margin:0;">
+        <input type="hidden" name="action" value="activate">
+        <input type="hidden" name="poll_id" value="<?= (int)$p["poll_id"] ?>">
+        <button class="btn btn-ghost small" type="submit">Activate</button>
+      </form>
+
+      <form method="POST" style="margin:0;"
+            onsubmit="return confirm('Delete this poll? This will also delete its options and votes.');">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="poll_id" value="<?= (int)$p["poll_id"] ?>">
+        <button class="btn danger small" type="submit">Delete</button>
+      </form>
+    </div>
+  <?php else: ?>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <span class="app-chip">Active</span>
+
+      <form method="POST" style="margin:0;"
+            onsubmit="return confirm('Delete this poll? This will also delete its options and votes.');">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="poll_id" value="<?= (int)$p["poll_id"] ?>">
+        <button class="btn danger small" type="submit">Delete</button>
+      </form>
+    </div>
+  <?php endif; ?>
+</td>
+
               </tr>
             <?php endforeach; ?>
             </tbody>

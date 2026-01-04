@@ -13,13 +13,13 @@ function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, "UTF-8")
 $msg = "";
 $isOk = true;
 
-/* 1) Get active poll */
+
 $stmt = $pdo->query("SELECT poll_id, question FROM polls WHERE is_active = 1 LIMIT 1");
 $poll = $stmt->fetch();
 
 $pollId = $poll ? (int)$poll["poll_id"] : 0;
 
-/* 2) If active poll exists, load options */
+
 $options = [];
 if ($pollId > 0) {
   $stmt = $pdo->prepare("SELECT option_id, option_text FROM poll_options WHERE poll_id = ? ORDER BY option_id ASC");
@@ -27,7 +27,7 @@ if ($pollId > 0) {
   $options = $stmt->fetchAll();
 }
 
-/* 3) Check if user already voted */
+
 $alreadyVoted = false;
 $myVoteOptionId = null;
 
@@ -41,7 +41,7 @@ if ($pollId > 0) {
   }
 }
 
-/* 4) Save vote */
+
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $pollId > 0) {
   if ($alreadyVoted) {
     $msg = "You already voted on this poll.";
